@@ -1,19 +1,19 @@
 services:
   db:
     image: postgres:17
-    container_name: db_container
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: 1mdb
+      POSTGRES_DB: mdb
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d mydb"]
+      test: ["CMD-SHELL", "pg_isready -U user -d mdb"]
       interval: 5s
       timeout: 5s
       retries: 5
-
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
   sender:
     build: .
     container_name: sender
@@ -21,7 +21,7 @@ services:
       DB_HOST: db
       DB_USER: user
       DB_PASSWORD: password
-      DB_NAME: 1mdb
+      DB_NAME: mdb
       DB_PORT: 5432
     ports:
       - "8080:8080"
